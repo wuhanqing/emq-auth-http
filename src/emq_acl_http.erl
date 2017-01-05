@@ -32,14 +32,9 @@
 init({AclReq, AclNomatch}) ->
 	{ok, #state{acl_req = AclReq, acl_nomatch = AclNomatch}}.
  
-check_acl({Client, PubSub, Topic}, #state{acl_req = #http_request{method = Method, url = Url, params = Params}, 
+check_acl({Client, PubSub, Topic}, #state{acl_req = #http_request{}, 
                                           acl_nomatch = AclNomatch}) ->
-    Params1 = feedvar(feedvar(feedvar(Params, Client), "%A", access(PubSub)), "%t", Topic),
-    case request(Method, Url, Params1) of
-        {ok, 200, _Body}   -> allow;
-        {ok, _Code, _Body} -> allow;
-        {error, Error}     -> lager:error("HTTP ~s Error: ~p", [Url, Error]), allow
-    end.
+   allow.
 
 access(subscribe) -> 1;
 access(publish)   -> 2.
