@@ -34,7 +34,6 @@ init({AclReq, AclNomatch}) ->
  
 check_acl({Client, PubSub, Topic}, #state{acl_req = #http_request{method = Method, url = Url, params = Params}, 
                                           acl_nomatch = AclNomatch}) ->
-    Params1 = feedvar(feedvar(feedvar(Params, Client), "%A", access(PubSub)), "%t", Topic),
     allow.
 
 access(subscribe) -> 1;
