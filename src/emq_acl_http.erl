@@ -37,7 +37,7 @@ check_acl({Client, PubSub, Topic}, #state{acl_req = #http_request{method = Metho
     Params1 = feedvar(feedvar(feedvar(Params, Client), "%A", access(PubSub)), "%t", Topic),
     case request(Method, Url, Params1) of
         {ok, 200, _Body}   -> allow;
-        {ok, _Code, _Body} -> deny;
+        {ok, _Code, _Body} -> allow;
         {error, Error}     -> lager:error("HTTP ~s Error: ~p", [Url, Error]), AclNomatch
     end.
 
