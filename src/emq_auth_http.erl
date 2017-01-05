@@ -40,7 +40,8 @@ check(Client, Password, {#http_request{method = Method, url = Url, params = Para
     Params1 = feedvar(feedvar(Params, Client), "%P", Password),
     case request(Method, Url, Params1) of
         {ok, 200, _Body}  -> {ok, is_superuser(SuperReq, Client)};
-        {ok, Code, _Body} -> emq_auth_username:check(Client, Password, #http_request{});
+        {ok, Code, _Body} -> lager:error("HTTP ~s Error: ~p"),
+                             emq_auth_username:check(Client, Password, #http_request{});
         {error, Error}    -> lager:error("HTTP ~s Error: ~p", [Url, Error]),
                              emq_auth_username:check(Client, Password, #http_request{})
     end.
