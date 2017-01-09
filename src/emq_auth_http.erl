@@ -39,11 +39,14 @@ check(#mqtt_client{username = Username}, Password, _Env) when ?UNDEFINED(Usernam
 check(Client, Password, {#http_request{method = Method, url = Url, params = Params}, SuperReq}) ->
     Params1 = feedvar(feedvar(Params, Client), "%P", Password),
     case request(Method, Url, Params1) of
-        {ok, 200, _Body}  -> {ok, is_superuser(SuperReq, Client)};
+        %{ok, 200, _Body}  -> {ok, is_superuser(SuperReq, Client)};
+        {ok, 200, _Body}  -> {ok, false};
         {ok, Code, _Body} -> lager:error("HTTP ~s Error: ~p"),
-                             emq_auth_username:check(Client, Password, #http_request{});
+                             %emq_auth_username:check(Client, Password, #http_request{});
+                             is_superuser(SuperReq, Client);
         {error, Error}    -> lager:error("HTTP ~s Error: ~p", [Url, Error]),
-                             emq_auth_username:check(Client, Password, #http_request{})
+                             %emq_auth_username:check(Client, Password, #http_request{})
+                             is_superuser(SuperReq, Client)
     end.
 
 description() -> "Authentication by HTTP API".
