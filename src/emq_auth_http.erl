@@ -55,7 +55,7 @@ description() -> "Authentication by HTTP API".
 %% Is Superuser?
 %%--------------------------------------------------------------------
 
--spec(is_superuser(undefined | #http_request{}, mqtt_client(), string()) -> {ok | error, {http_code, any()}}).
+-spec(is_superuser(undefined | #http_request{}, mqtt_client(), string()) -> {ok | error, any()}).
 is_superuser(undefined, _MqttClient, Password) ->
     false;
 is_superuser(#http_request{method = Method, url = Url, params = Params}, MqttClient, Password) ->
