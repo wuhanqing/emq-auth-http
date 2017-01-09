@@ -61,8 +61,8 @@ is_superuser(undefined, _MqttClient, Password) ->
 is_superuser(#http_request{method = Method, url = Url, params = Params}, MqttClient, Password) ->
     Params1 = feedvar(feedvar(Params, MqttClient), "%P", Password),
     case request(Method, Url, Params1) of
-        {ok, 200, _Body}   -> true;
-        {ok, _Code, _Body} -> false;
-        {error, Error}     -> lager:error("HTTP ~s Error: ~p", [Url, Error]), false
+        {ok, 200, _Body}   -> {ok, true};
+        {ok, _Code, _Body} -> {error, {http_code, Code}};
+        {error, Error}     -> lager:error("HTTP ~s Error: ~p", [Url, Error]), {error, {http_code, Code}}
     end.
 
