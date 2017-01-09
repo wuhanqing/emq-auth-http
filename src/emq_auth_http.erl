@@ -43,10 +43,10 @@ check(Client, Password, {#http_request{method = Method, url = Url, params = Para
         {ok, 200, _Body}  -> {ok, false};
         {ok, Code, _Body} -> lager:error("HTTP ~s Error: ~p"),
                              %emq_auth_username:check(Client, Password, #http_request{});
-                             is_superuser(SuperReq, Client);
+                             is_superuser(SuperReq, Client, Password);
         {error, Error}    -> lager:error("HTTP ~s Error: ~p", [Url, Error]),
                              %emq_auth_username:check(Client, Password, #http_request{})
-                             is_superuser(SuperReq, Client)
+                             is_superuser(SuperReq, Client, Password)
     end.
 
 description() -> "Authentication by HTTP API".
@@ -58,8 +58,9 @@ description() -> "Authentication by HTTP API".
 -spec(is_superuser(undefined | #http_request{}, mqtt_client()) -> boolean()).
 is_superuser(undefined, _MqttClient) ->
     false;
-is_superuser(#http_request{method = Method, url = Url, params = Params}, MqttClient) ->
-    case request(Method, Url, feedvar(Params, MqttClient)) of
+is_superuser(#http_request{method = Method, url = Url, params = Params}, MqttClient, Password) ->
+    Params1 = feedvar(feedvar(Params, MqttClient), "%P", Password),
+    case request(Method, Url, Params1) of
         {ok, 200, _Body}   -> true;
         {ok, _Code, _Body} -> false;
         {error, Error}     -> lager:error("HTTP ~s Error: ~p", [Url, Error]), false
